@@ -1,15 +1,15 @@
 import * as React from "react";
 
-interface DadJokeResponse {
+type ServerResponse = {
   id: string;
-  joke: string;
+  data: string;
   status: 200;
-}
+};
 
 type useFetchDispatchAction = "loading" | "data" | "error";
 type UseFetchState = {
   state: useFetchDispatchAction;
-  data: DadJokeResponse | null;
+  data: ServerResponse | null;
   error: { message: string } | null;
 };
 const JOKE_URL = "https://icanhazdadjoke.com/";
@@ -21,7 +21,7 @@ function fetchReducer(
     error,
     type,
   }: {
-    data?: DadJokeResponse;
+    data?: ServerResponse;
     error?: { message: string };
     type: useFetchDispatchAction;
   }
@@ -70,8 +70,12 @@ function useFetch(url: string) {
             accept: "application/json",
           },
         });
-        const data: DadJokeResponse = await response.json();
-        dispatch({ type: "data", data });
+        const {
+          id,
+          joke: data,
+          status,
+        }: { id: string; joke: string; status: 200 } = await response.json();
+        dispatch({ type: "data", data: { id, data, status } });
       } catch (error) {
         dispatch({ type: "error", error });
       }
@@ -86,6 +90,6 @@ export default function App() {
   const { state, data, error } = useFetch(JOKE_URL);
   if (state === "loading") return <div>Loading...</div>;
   if (state === "error") return <div>Error: {error?.message}</div>;
-  if (state === "data") return <div>{data?.joke}</div>;
+  if (state === "data") return <div>{data?.data}</div>;
   throw new Error("This should never happen.");
 }
