@@ -6,60 +6,57 @@ type ServerResponse = {
   status: 200;
 };
 
-type useFetchDispatchAction = "loading" | "data" | "error";
-type UseFetchState = {
-  state: useFetchDispatchAction;
-  data: ServerResponse | null;
-  error: { message: string } | null;
+type FetchLoadingAction = {
+  type: "loading";
 };
+
+type FetchDataAction = {
+  type: "data";
+  data: ServerResponse;
+};
+
+type FetchErrorAction = {
+  type: "error";
+  error: Error;
+};
+
+type FetchState = {
+  state: "loading" | "error" | "data";
+  data: ServerResponse | null;
+  error: Error | null;
+};
+
+type FetchActions = FetchDataAction | FetchErrorAction | FetchLoadingAction;
 const JOKE_URL = "https://icanhazdadjoke.com/";
 
-function fetchReducer(
-  state: UseFetchState,
-  {
-    data,
-    error,
-    type,
-  }: {
-    data?: ServerResponse;
-    error?: { message: string };
-    type: useFetchDispatchAction;
-  }
-): UseFetchState {
-  switch (type) {
+function fetchReducer(state: FetchState, action: FetchActions): FetchState {
+  switch (action.type) {
     case "loading":
       return {
         state: "loading",
-        data: null,
         error: null,
+        data: null,
       };
     case "error":
-      if (error) {
-        return {
-          state: "error",
-          data: null,
-          error: error,
-        };
-      }
-      break;
+      return {
+        state: "error",
+        error: action.error,
+        data: null,
+      };
     case "data":
-      if (data) {
-        return {
-          state: "data",
-          data: data,
-          error: null,
-        };
-      }
-      break;
+      return {
+        state: "data",
+        data: action.data,
+        error: null,
+      };
   }
-  return state;
 }
 
 function useFetch(url: string) {
   const [state, dispatch] = React.useReducer(fetchReducer, {
     state: "loading",
-    data: null,
     error: null,
+    data: null,
   });
 
   React.useEffect(() => {
