@@ -24,7 +24,7 @@ const Counter = ({ count }: { count: number }) => {
 const CounterButtons = ({
   setCount,
 }: {
-  setCount: (func: (count: number) => number) => void;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   return (
     <div>
@@ -75,7 +75,7 @@ const Tooltip = ({
 const MousePosition = ({
   children,
 }: {
-  children: ({ x, y }: { x: number; y: number }) => JSX.Element;
+  children: ({ x, y }: { x: number; y: number }) => React.ReactElement;
 }) => {
   const [mousePosition, setMousePosition] = React.useState<{
     x: number;
@@ -95,9 +95,6 @@ const MousePosition = ({
   return children(mousePosition);
 };
 
-// Don't change anything below this point
-// Any of the red squiggles down here will
-// go away once you fix the issues above.
 export default function App() {
   const [count, setCount] = React.useState<number>(0);
   return (
