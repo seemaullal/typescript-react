@@ -1,41 +1,31 @@
 import * as React from "react";
 
-/**
- * Props Cardio
- *
- * This page has several components that accept and consume props.
- * Your job is to add the neccessary type annotations that represent
- * the props of the components.
- *
- * Comments above each section of components give hints as to how to
- * properly add types to the components.
- *
- * You'll know that you are done when all of the red squiggles are gone.
- */
-
 // HTML Element Mirroring
 type VariantColors = "primary" | "secondary";
 const Button = ({
   variantColor,
-  style,
   ...props
 }: {
-  variantColor: VariantColors;
-}) => {
+  variantColor?: VariantColors;
+} & React.ComponentPropsWithoutRef<"button">) => {
   const innerStyle = {
-    ...style,
+    ...props,
     color: "white",
     backgroundColor:
-      variantColor === "primary" ? "rgb(26,100,255)" : "rgb(170,170,170)"
+      variantColor === "primary" ? "rgb(26,100,255)" : "rgb(170,170,170)",
   };
   return <button style={innerStyle} {...props} />;
 };
 
 // Basic Props
-const Counter = ({ count }) => {
+const Counter = ({ count }: { count: number }) => {
   return <h1>Count: {count}</h1>;
 };
-const CounterButtons = ({ setCount }) => {
+const CounterButtons = ({
+  setCount,
+}: {
+  setCount: (func: (count: number) => number) => void;
+}) => {
   return (
     <div>
       <Button
@@ -50,7 +40,15 @@ const CounterButtons = ({ setCount }) => {
 };
 
 // Children Prop & Style Prop
-const Tooltip = ({ children, contents, style }) => {
+const Tooltip = ({
+  children,
+  contents,
+  style,
+}: {
+  children: React.ReactNode;
+  contents: React.ReactNode;
+  style?: React.CSSProperties;
+}) => {
   const [hovered, setHovered] = React.useState(false);
   return (
     <div
@@ -63,7 +61,7 @@ const Tooltip = ({ children, contents, style }) => {
           ...style,
           display: hovered ? "block" : "none",
           position: "absolute",
-          top: "100%"
+          top: "100%",
         }}
       >
         {contents}
@@ -74,8 +72,15 @@ const Tooltip = ({ children, contents, style }) => {
 };
 
 // Render Props
-const MousePosition = ({ children }) => {
-  const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+const MousePosition = ({
+  children,
+}: {
+  children: ({ x, y }: { x: number; y: number }) => JSX.Element;
+}) => {
+  const [mousePosition, setMousePosition] = React.useState<{
+    x: number;
+    y: number;
+  }>({ x: 0, y: 0 });
 
   React.useEffect(() => {
     function onMove(event: MouseEvent) {
@@ -94,7 +99,7 @@ const MousePosition = ({ children }) => {
 // Any of the red squiggles down here will
 // go away once you fix the issues above.
 export default function App() {
-  const [count, setCount] = React.useState(0);
+  const [count, setCount] = React.useState<number>(0);
   return (
     <div>
       <div>See the instructions in the code editor.</div>
@@ -108,7 +113,7 @@ export default function App() {
             style={{
               border: "solid 1px rgba(255,255,255,0.2)",
               padding: "6px",
-              borderRadius: "3px"
+              borderRadius: "3px",
             }}
             contents={
               <span style={{ color: "red" }}>Mouse Position Tooltip</span>
